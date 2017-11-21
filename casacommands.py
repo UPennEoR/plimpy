@@ -27,17 +27,17 @@ def reorrder(msname):
     import casac
     ms=casac.casac.table()
     ms.open(msname,nomodify=False)
-    a1 , a2 , data = [ms.getcol(x) for x in [ "ANTENNA1" , "ANTENNA2" , "DATA" ]]
+    a1, a2, data = [ms.getcol(x) for x in ["ANTENNA1", "ANTENNA2", "DATA"]]
     m = a1 > a2
-    data [: ,: ,m]= data [: ,: , m ]. conj ()
-    x = a2 [ m ]
-    a2 [ m ]= a1 [ m ]
-    a1 [ m ]= x
+    data[:,:,m]= data[:,:,m].conj()
+    x = a2[m]
+    a2[m] = a1[m]
+    a1[m] = x
     ms.putcol("ANTENNA1",a1)
     ms.putcol("ANTENNA2",a2)
     ms.putcol("DATA",data)
-    ms.flush ()
-    ms.close ()
+    ms.flush()
+    ms.close()
 
 def flag(msname): #You might have to update this
     flagdata(msname, flagbackup=True, mode='manual',antenna="22" )
