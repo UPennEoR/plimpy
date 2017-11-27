@@ -23,31 +23,31 @@ for uvfit in uvfits:
 #*******************************************************************
 
 
-def reorder(msname):
+def reorrder(msname):
     import casac
     ms=casac.casac.table()
     ms.open(msname,nomodify=False)
-    a1, a2, data = [ms.getcol(x) for x in ["ANTENNA1", "ANTENNA2", "DATA"]]
+    a1 , a2 , data = [ms.getcol(x) for x in [ "ANTENNA1" , "ANTENNA2" , "DATA" ]]
     m = a1 > a2
-    data[:,:,m]= data[:,:,m].conj()
-    x = a2[m]
-    a2[m] = a1[m]
-    a1[m] = x
+    data [: ,: ,m]= data [: ,: , m ]. conj ()
+    x = a2 [ m ]
+    a2 [ m ]= a1 [ m ]
+    a1 [ m ]= x
     ms.putcol("ANTENNA1",a1)
     ms.putcol("ANTENNA2",a2)
     ms.putcol("DATA",data)
-    ms.flush()
-    ms.close()
+    ms.flush ()
+    ms.close ()
 
 def flag(msname): #You might have to update this
     flagdata(msname, flagbackup=True, mode='manual',antenna="22" )
     flagdata(msname, flagbackup=True, mode='manual',antenna="43" )
     flagdata(msname, flagbackup=True, mode='manual',antenna="81" )
 
-def gen_image(msname,imagename):
+def gen_image(msname,imagename): # Makes image
     clean(msname,imagename=imagename,niter =500,weighting = 'briggs',robust =0,imsize =[512 ,512] ,cell=['500 arcsec'] ,mode='mfs',nterms =1,spw='0:150~900')
 
-def mkinitmodel(msname,ext):
+def mkinitmodel(msname,ext): #Model you give casa
     cl.addcomponent(flux =1.0 ,fluxunit='Jy', shape = 'point' ,dir='J2000 17h45m40.0409s -29d0m28.118s')
     cl.rename('GC'+ext+'.cl')
     cl.close()
@@ -64,6 +64,8 @@ def phscal(msname):
     applycal(msname,gaintable=[kc])
     bandpass(msname,caltable=bc,solint='inf',combine='scan',refant='10')
     applycal(msname,gaintable=[bc])
+
+
 #%% CREATE IMAGE
 MSfilelist = glob.glob('*.MS')
 name=MSfilelist
@@ -84,13 +86,14 @@ for i in np.arange(len(MSfilelist)):
     clear_cal(msname=name[i])# Calibration:Solving for delays and gain solutions
     phscal(msname=name[i])
     gen_image(msname=name[i],imagename=imgnam2+nwms[i])# Imaging again
+    #clean(msname,imagename=imagename,niter =500,weighting = 'briggs',robust =0,imsize =[512 ,512] ,cell=['500 arcsec'] ,mode='mfs',nterms =1,spw='0:150~900',stokes='I,Q,U,V')
 
 #%% CREATE .NPZ FILE IN CASA
 MSBCALlist=glob.glob('*MSB.cal')
 
 i=0
-for i in np.arange(len(MSBCALfile)):
-    tb.open(MSBCALfile[i])
+for i in np.arange(len(MSBCALlist)):
+    tb.open(MSBCALlist[i])
     gain = tb.getcol('CPARAM')
     np.savez(nwms[i]+'.npz',gains=gain)
 
@@ -110,6 +113,7 @@ plt.plot(np.abs(gain[0,:,0]));plt.show()
     test.info()
     test[0].header
     """
+
 
 
 
