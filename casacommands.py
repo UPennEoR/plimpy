@@ -45,7 +45,7 @@ def flag(msname): #You might have to update this
     flagdata(msname, flagbackup=True, mode='manual',antenna="81" )
 
 def gen_image(msname,imagename): # Makes image
-    clean(msname,imagename=imagename,niter =500,weighting = 'briggs',robust =0,imsize =[512 ,512] ,cell=['500 arcsec'] ,mode='mfs',nterms =1,spw='0:150~900')
+    clean(msname,imagename=imagename,niter =500,weighting = 'briggs',robust =0,imsize =[512 ,512] ,cell=['500 arcsec'] ,mode='mfs',nterms =1,spw='0:150~900',stokes='I,Q,U,V')
 
 def mkinitmodel(msname,ext): #Model you give casa
     cl.addcomponent(flux =1.0 ,fluxunit='Jy', shape = 'point' ,dir='J2000 17h45m40.0409s -29d0m28.118s')
@@ -94,7 +94,7 @@ MSBCALlist=glob.glob('*MSB.cal')
 i=0
 for i in np.arange(len(MSBCALlist)):
     tb.open(MSBCALlist[i])
-    gain = tb.getcol('CPARAM')
+    gain = tb.getcol('CPARAM') # use 'FPARAM' when using K.cal files
     np.savez(nwms[i]+'.npz',gains=gain)
 
 d = np.load(nwms[i]+'.npz')
@@ -104,15 +104,13 @@ plt.imshow(np.abs(gain[0,:,:]).T, aspect='auto', interpolation='nearest');plt.co
 plt.plot(np.abs(gain[0,:,0]));plt.show()
 
 #%%
-"""
-    # You can export .image file as a .fits file then read fits file into python normally
-    exportfits('name.image','new_name.fits') # CASA
+# You can export .image file as a .fits file then read fits file into python normally
+exportfits('name.image','new_name.fits') # Done in CASA
     
-    # This section is to be done in python
-    test=fits.open('new_name.fits')
-    test.info()
-    test[0].header
-    """
+# This section is to be done in python
+test=fits.open('new_name.fits')
+test.info()
+test[0].header
 
 
 

@@ -1,10 +1,8 @@
 from pyuvdata import UVData
+import glob
 
-files = ['zen.2457548.45923.xx.HH.uvcU',
-         'zen.2457548.45923.yy.HH.uvcU',
-         'zen.2457548.45923.xy.HH.uvcU',
-         'zen.2457548.45923.yx.HH.uvcU']
+files = glob.glob('*U') #[xx,yy,xy,yx]
 
 uv = UVData()
 uv.read_miriad(files)
-uv.write_miriad('zen.2457548.45923.HH.uvcU')
+uv.write_miriad('zen.2457548.46619.HH.uvcU')
