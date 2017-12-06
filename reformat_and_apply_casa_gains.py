@@ -26,7 +26,7 @@ if not opts.ex_ants:
     ex_ants = []
 else:
     ex_ants = opts.ex_ants.split(',')
-    ex_ants = [a.strip() for a in ex_ants]
+    ex_ants = map(int, [a.strip() for a in ex_ants])
 
 assert opts.pol, 'polarization required'
 assert opts.pol in opts.miriad_file, 'polarization not present in MIRIAD filename provided.'
