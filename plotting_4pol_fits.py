@@ -1,6 +1,6 @@
 from astropy.io import fits
 import numpy as np, matplotlib.pyplot as plt
-import sys
+import sys, glob
 from matplotlib import gridspec
 
 norm = True
@@ -25,8 +25,8 @@ bottom=0.5/(nrow+1)
 left=0.5/(ncol+1)
 right=1-0.5/(ncol+1)
 
-f,axarr = plt.subplots(2,2,sharex=True,sharey=True)
-gs = gridspec.GridSpec(2, 2, width_ratios=[1, 1], wspace=0.01, hspace=0.1, top=top,
+f,axarr = plt.subplots(nrow,ncol,sharex=True,sharey=True)
+gs = gridspec.GridSpec(nrow,ncol, width_ratios=[1, 1], wspace=0.01, hspace=0.1, top=top,
                        bottom=bottom, left=left, right=right) 
 iarr = [0,0,1,1]
 jarr = [0,1,0,1]
