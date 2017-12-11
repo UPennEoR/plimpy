@@ -7,12 +7,12 @@
     """
 
 import numpy as np
-from astropy.io import fits
+from astropy.io import fits #for python only
 import matplotlib.pyplot as plt
 import glob
 import os
 
-from fitsconverter import *
+from fitsconverter import * #for python only
 
 #Convert from .uvfits to .uvfitsMS
 #*******************************************************************
@@ -42,10 +42,11 @@ def reorrder(msname):
 def flag(msname): #You might have to update this
     flagdata(msname, flagbackup=True, mode='manual',antenna="22" )
     flagdata(msname, flagbackup=True, mode='manual',antenna="43" )
+    flagdata(msname, flagbackup=True, mode='manual',antenna="80" )
     flagdata(msname, flagbackup=True, mode='manual',antenna="81" )
 
 def gen_image(msname,imagename): # Makes image
-    clean(msname,imagename=imagename,niter =500,weighting = 'briggs',robust =0,imsize =[512 ,512] ,cell=['500 arcsec'] ,mode='mfs',nterms =1,spw='0:150~900',stokes='I,Q,U,V')
+    clean(msname,imagename=imagename,niter =500,weighting = 'briggs',robust =0,imsize =[512 ,512] ,cell=['500 arcsec'] ,mode='mfs',nterms =1,spw='0:150~900',stokes='IQUV')
 
 def mkinitmodel(msname,ext): #Model you give casa
     cl.addcomponent(flux =1.0 ,fluxunit='Jy', shape = 'point' ,dir='J2000 17h45m40.0409s -29d0m28.118s')
@@ -74,8 +75,8 @@ imgnam2='clean2_'
 
 nwms=[]
 for ms in MSfilelist:
-    msf=ms.strip('zen.'+'HH.uvcROU.MS')
-    nwms.append(msf)
+    msf=ms.strip('zen.'+'HH.uvcRU.MS')
+    nwms.append(msf+'.R')
 
 i=0
 for i in np.arange(len(MSfilelist)):
@@ -86,7 +87,7 @@ for i in np.arange(len(MSfilelist)):
     clear_cal(msname=name[i])# Calibration:Solving for delays and gain solutions
     phscal(msname=name[i])
     gen_image(msname=name[i],imagename=imgnam2+nwms[i])# Imaging again
-    #clean(msname,imagename=imagename,niter =500,weighting = 'briggs',robust =0,imsize =[512 ,512] ,cell=['500 arcsec'] ,mode='mfs',nterms =1,spw='0:150~900',stokes='I,Q,U,V')
+#clean(msname,imagename=imagename,niter =500,weighting = 'briggs',robust =0,imsize =[512 ,512] ,cell=['500 arcsec'] ,mode='mfs',nterms =1,spw='0:150~900',stokes='IQUV')
 
 #%% CREATE .NPZ FILE IN CASA
 MSBCALlist=glob.glob('*MSB.cal')
@@ -105,16 +106,29 @@ plt.plot(np.abs(gain[0,:,0]));plt.show()
 
 #%%
 # You can export .image file as a .fits file then read fits file into python normally
-exportfits('name.image','new_name.fits') # Done in CASA
-    
+exportfits('imagename.image','fitsimagename.fits') # Done in CASA for a single file
+
+imagename = glob.glob('clean2*.image')
+for im in imagename:
+    ext = '.fits'
+    fitsimagename = im.strip('.image')
+    exportfits(imagename,fitsimagename+ext)
+fitsimage = glob.glob(clean2*.fits)
+
+
 # This section is to be done in python
 test=fits.open('new_name.fits')
 test.info()
 test[0].header
 
 
-
-
+gen_image(msname=name[0],imagename=imgnam2+nwms[0])
+gen_image(name[1],imgnam1+nwms[1])
+gen_image(msname=name[1],imagename=imgnam2+nwms[1])
+gen_image(name[2],imgnam1+nwms[2])
+gen_image(msname=name[2],imagename=imgnam2+nwms[2])
+gen_image(name[3],imgnam1+nwms[3])
+gen_image(msname=name[3],imagename=imgnam2+nwms[3])
 
 
 
