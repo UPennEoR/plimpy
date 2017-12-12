@@ -23,7 +23,7 @@ for uvfit in uvfits:
 #*******************************************************************
 
 
-def reorrder(msname):
+def reorder(msname):
     import casac
     ms=casac.casac.table()
     ms.open(msname,nomodify=False)
