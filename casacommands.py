@@ -29,15 +29,15 @@ def reorrder(msname):
     ms.open(msname,nomodify=False)
     a1 , a2 , data = [ms.getcol(x) for x in [ "ANTENNA1" , "ANTENNA2" , "DATA" ]]
     m = a1 > a2
-    data [: ,: ,m]= data [: ,: , m ]. conj ()
-    x = a2 [ m ]
-    a2 [ m ]= a1 [ m ]
-    a1 [ m ]= x
-    ms.putcol("ANTENNA1",a1)
-    ms.putcol("ANTENNA2",a2)
-    ms.putcol("DATA",data)
-    ms.flush ()
-    ms.close ()
+    data[:, :, m]= data[:, :, m].conj()
+    x = a2[m]
+    a2[m] = a1[m]
+    a1[m] = x
+    ms.putcol("ANTENNA1", a1)
+    ms.putcol("ANTENNA2", a2)
+    ms.putcol("DATA", data)
+    ms.flush()
+    ms.close()
 
 def flag(msname): #You might have to update this
     flagdata(msname, flagbackup=True, mode='manual',antenna="22" )
@@ -46,24 +46,24 @@ def flag(msname): #You might have to update this
     flagdata(msname, flagbackup=True, mode='manual',antenna="81" )
 
 def gen_image(msname,imagename): # Makes image
-    clean(msname,imagename=imagename,niter =500,weighting = 'briggs',robust =0,imsize =[512 ,512] ,cell=['500 arcsec'] ,mode='mfs',nterms =1,spw='0:150~900',stokes='IQUV')
+    clean(msname,imagename=imagename, niter=500, weighting='briggs', robust=0, imsize=[512,512], cell=['500 arcsec'], mode='mfs', nterms=1, spw='0:150~900', stokes='IQUV')
 
 def mkinitmodel(msname,ext): #Model you give casa
-    cl.addcomponent(flux =1.0 ,fluxunit='Jy', shape = 'point' ,dir='J2000 17h45m40.0409s -29d0m28.118s')
+    cl.addcomponent(flux=1.0, fluxunit='Jy', shape='point', dir='J2000 17h45m40.0409s -29d0m28.118s')
     cl.rename('GC'+ext+'.cl')
     cl.close()
-    ft(msname , complist = 'GC'+ext+'.cl' , usescratch = True )
+    ft(msname, complist='GC'+ext+'.cl', usescratch=True)
 
 def clear_cal(msname):
     clearcal(msname)
 
 def phscal(msname):
     import os,sys
-    kc = os.path.basename(msname)  + "K.cal"
-    bc = os.path.basename(msname)  + "B.cal"
-    gaincal(msname,caltable=kc,gaintype = 'K' , solint='inf',refant='10')
+    kc = os.path.basename(msname) + "K.cal"
+    bc = os.path.basename(msname) + "B.cal"
+    gaincal(msname,caltable=kc, gaintype='K', solint='inf', refant='10')
     applycal(msname,gaintable=[kc])
-    bandpass(msname,caltable=bc,solint='inf',combine='scan',refant='10')
+    bandpass(msname,caltable=bc, solint='inf', combine='scan', refant='10')
     applycal(msname,gaintable=[bc])
 
 
@@ -115,12 +115,10 @@ for im in imagename:
     exportfits(imagename,fitsimagename+ext)
 fitsimage = glob.glob(clean2*.fits)
 
-
 # This section is to be done in python
 test=fits.open('new_name.fits')
 test.info()
 test[0].header
-
 
 gen_image(msname=name[0],imagename=imgnam2+nwms[0])
 gen_image(name[1],imgnam1+nwms[1])
@@ -129,14 +127,3 @@ gen_image(name[2],imgnam1+nwms[2])
 gen_image(msname=name[2],imagename=imgnam2+nwms[2])
 gen_image(name[3],imgnam1+nwms[3])
 gen_image(msname=name[3],imagename=imgnam2+nwms[3])
-
-
-
-
-
-
-
-
-
-
-
