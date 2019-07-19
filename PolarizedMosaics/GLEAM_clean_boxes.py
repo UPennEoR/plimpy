@@ -4,6 +4,7 @@ from glob import glob
 import os
 
 def within_bounds(di, dra, dde, ra, de, max_angle, min_brightness):
+    #anglular distance on a sphere from ra and dec isn't just the standard distance formula
     cosa = np.sin(dde)*np.sin(de) + np.cos(dde)*np.cos(de)*np.cos(dra - ra)
     return np.logical_and(cosa > np.cos(max_angle), di > min_brightness)
 
@@ -28,4 +29,5 @@ for im in images:
     mask_file.writelines(["circle[[" + str(x[0]) + "deg, " + str(x[1]) + "deg], 0.5deg]\n" for x in in_bounds])
     mask_file.close()
 
-    os.system("casa -c \"clean(vis='%s.ms', imagename='%s.deconvolved', niter=100, weighting='briggs', robust=0, imsize = [512,512], pbcor=False, cell=['500 arcsec'], mode='mfs', nterms=1, spw='0:150~900', stokes='IQUV', mask='%s.masks.txt', interactive=False, npercycle=5, threshold='0.1mJy/beam')\"" % (path+im[43:], imnamepath, imnamepath))
+    for i in range(0,2):
+        os.system("casa -c \"clean(vis='%s.ms', imagename='%s.deconvolved', niter=200, weighting='briggs', robust=0, imsize = [512,512], pbcor=False, cell=['500 arcsec'], mode='mfs', nterms=1, spw='0:150~900', stokes='IQUV', mask='%s.masks.txt', interactive=False, npercycle=5, threshold='0.1mJy/beam')\"" % (path+im[43:], imnamepath, imnamepath))
