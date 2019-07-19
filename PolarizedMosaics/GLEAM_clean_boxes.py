@@ -9,7 +9,7 @@ def within_bounds(di, dra, dde, ra, de, max_angle, min_brightness):
     return np.logical_and(cosa > np.cos(max_angle), di > min_brightness)
 
 path = '/lustre/aoc/projects/hera/H1C_IDR2/IDR2_2/2458098/'
-impath = '/lustre/aoc/projects/hera/aseidel/'
+impath = '/lustre/aoc/projects/hera/aseidel/final/'
 
 images = [x[len(path):-22] for x in glob(path+'zen.*.HH.calibrated.uvh5_image/*image.image.fits')]
 
