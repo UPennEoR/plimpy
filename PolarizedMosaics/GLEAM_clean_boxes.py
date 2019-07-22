@@ -4,14 +4,15 @@ from glob import glob
 import os
 
 def within_bounds(di, dra, dde, ra, de, max_angle, min_brightness):
-    #anglular distance on a sphere from ra and dec isn't just the standard distance formula
+    #angular distance on a sphere from ra and dec isn't just the standard distance formula
     cosa = np.sin(dde)*np.sin(de) + np.cos(dde)*np.cos(de)*np.cos(dra - ra)
     return np.logical_and(cosa > np.cos(max_angle), di > min_brightness)
 
 path = '/lustre/aoc/projects/hera/H1C_IDR2/IDR2_2/2458098/'
-impath = '/lustre/aoc/projects/hera/aseidel/'
+impath = '/lustre/aoc/projects/hera/aseidel/final/'
 
 images = [x[len(path):-22] for x in glob(path+'zen.*.HH.calibrated.uvh5_image/*image.image.fits')]
+images.sort()
 
 for im in images:
     imnamepath = impath+im[43:]
@@ -29,5 +30,4 @@ for im in images:
     mask_file.writelines(["circle[[" + str(x[0]) + "deg, " + str(x[1]) + "deg], 0.5deg]\n" for x in in_bounds])
     mask_file.close()
 
-    for i in range(0,2):
-        os.system("casa -c \"clean(vis='%s.ms', imagename='%s.deconvolved', niter=200, weighting='briggs', robust=0, imsize = [512,512], pbcor=False, cell=['500 arcsec'], mode='mfs', nterms=1, spw='0:150~900', stokes='IQUV', mask='%s.masks.txt', interactive=False, npercycle=5, threshold='0.1mJy/beam')\"" % (path+im[43:], imnamepath, imnamepath))
+    os.system("casa -c \"clean(vis='%s.ms', imagename='%s.deconvolved', niter=20000, weighting='briggs', robust=0, imsize = [512,512], pbcor=False, cell=['500 arcsec'], mode='mfs', nterms=1, spw='0:150~900', stokes='IQUV', mask='%s.masks.txt', interactive=False, npercycle=5, threshold='0.1mJy/beam')\"" % (path+im[43:], imnamepath, imnamepath))
