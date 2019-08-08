@@ -5,7 +5,7 @@ from glob import glob
 import os
 
 def within_bounds(di, dra, dde, ra, de, max_angle, min_brightness):
-    #angular distance on a sphere from ra and dec isn't just the standard distance formula
+    #getting angular distance on a sphere from ra and dec isn't just the standard distance formula
     cosa = np.sin(dde)*np.sin(de) + np.cos(dde)*np.cos(de)*np.cos(dra - ra)
     return np.logical_and(cosa > np.cos(max_angle), di > min_brightness)
 
@@ -18,17 +18,21 @@ impath = '/home/alex/gleam clean boxes/script_test/images/'
 images = [x[len(path):-7] for x in glob(path+'zen.*.HH.calibrated.uvfits')]
 images.sort()
 
+#check this
+dec0 = -30.8
+
 for file in images:
     imnamepath = impath+file
-    hdul = UVData().read_uvfits(path+file+".uvfits", read_data=False, read_metadata=False)
-    dec0, ra0 = np.deg2rad(np.array((hdul[0].header['CRVAL2'], hdul[0].header['CRVAL1'])))
-
+    uvd = UVData()
+    uvd.read_uvfits(path+file+".uvfits", read_data=False, read_metadata=True)
+    ra0 = np.rad2deg(np.median(np.unique(uvd.lst_array)))
+    
     data_hdul = fits.open('asu.fit')
     data = data_hdul[2].data
-    in_bounds = data[within_bounds(data['Fintwide'], np.deg2rad(data['RAJ2000']), np.deg2rad(data['DEJ2000']), ra0, dec0, np.deg2rad(10.), 1)]
+    in_bounds = data[within_bounds(data['Fintwide'], np.deg2rad(data['RAJ2000']), np.deg2rad(data['DEJ2000']), np.deg2rad(ra0), np.deg2rad(dec0), np.deg2rad(10.), 1)]
 
     fornax = np.array([[(3+24/60)/24*360, -(37+16/60), 260], [(3+(21+40/60)/60)/24*360, -(37+10/60), 490], [(3+(22+43/60)/60)/24*360, -(37+(12+2/60)/60), 2]])
-    fornax_inb = fornax[within_bounds(fornax[:,2], np.deg2rad(fornax[:,0]), np.deg2rad(fornax[:,1]), ra0, dec0, np.deg2rad(30.), 0)]
+    fornax_inb = fornax[within_bounds(fornax[:,2], np.deg2rad(fornax[:,0]), np.deg2rad(fornax[:,1]), np.deg2rad(ra0), np.deg2rad(dec0), np.deg2rad(30.), 0)]
 
     mask_file = open(imnamepath+".masks.txt", "w")
     mask_file.write("#CRTFv0\n")
@@ -43,3 +47,4 @@ for file in images:
     summary.close()
 
 os.system("casa -c image_maker_casa.py \"%s\"" % impath)
+
