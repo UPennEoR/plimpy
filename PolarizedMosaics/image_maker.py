@@ -31,7 +31,7 @@ for file in images:
     data = data_hdul[2].data
     in_bounds = data[within_bounds(data['Fintwide'], np.deg2rad(data['RAJ2000']), np.deg2rad(data['DEJ2000']), np.deg2rad(ra0), np.deg2rad(dec0), np.deg2rad(10.), 1)]
 
-    fornax = np.array([[(3+24/60)/24*360, -(37+16/60), 260], [(3+(21+40/60)/60)/24*360, -(37+10/60), 490], [(3+(22+43/60)/60)/24*360, -(37+(12+2/60)/60), 2]])
+    fornax = np.array([[(3+24/60.)/24.*360, -(37+16/60.), 260], [(3+(21+40/60.)/60.)/24.*360, -(37+10/60.), 490], [(3+(22+43/60.)/60.)/24.*360, -(37+(12+2/60.)/60.), 2]])
     fornax_inb = fornax[within_bounds(fornax[:,2], np.deg2rad(fornax[:,0]), np.deg2rad(fornax[:,1]), np.deg2rad(ra0), np.deg2rad(dec0), np.deg2rad(30.), 0)]
 
     mask_file = open(imnamepath+".masks.txt", "w")
