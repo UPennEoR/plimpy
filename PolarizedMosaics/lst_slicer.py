@@ -30,6 +30,11 @@ import astropy
         
     return flagged'''
 
+def within_bounds(di, dra, dde, ra, de, max_angle, min_brightness):
+    #getting angular distance on a sphere from ra and dec isn't just the standard distance formula
+    cosa = np.sin(dde)*np.sin(de) + np.cos(dde)*np.cos(de)*np.cos(dra - ra)
+    return np.logical_and(cosa > np.cos(max_angle), di > min_brightness)
+
 def imaged_files (path):
     imagefits = glob.glob(str(path) + 'zen.*.HH.calibrated.uvh5_image/*.image.image.fits')
     uvh5files = []
