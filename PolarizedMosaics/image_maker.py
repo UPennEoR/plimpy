@@ -27,17 +27,20 @@ data = data_hdul[2].data
 for img in images:
     imnamepath = impath + img
     uvd = UVData()
-    uvd.read_uvfits(path + img + ".uvfits", read_data=False, keep_all_metadata=True)
+    uvd.read_uvfits(path + img + ".uvfits", read_data=False,
+            keep_all_metadata=True)
     ra0 = np.rad2deg(np.median(np.unique(uvd.lst_array)))
 
-    all_angles = [np.deg2rad(x) for x in [data['RAJ2000'], data['DEJ2000'], ra0, dec0, 10]]
+    all_angles = [np.deg2rad(x)
+                    for x in [data['RAJ2000'], data['DEJ2000'], ra0, dec0, 10]]
     in_bounds = data[within_bounds(data['Fintwide'], 1, *all_angles)]
 
     # additional sources not in GLEAM [ra, dec, intensity]
     fornax = np.array([[(3 + 24         /60)/24 * 360, -(37 + 16/60), 260],
                        [(3 +(21 + 40/60)/60)/24 * 360, -(37 + 10/60), 490],
                        [(3 +(22 + 43/60)/60)/24 * 360, -(37 +(12+2/60)/60), 2]])
-    f_angles = [np.deg2rad(x) for x in [fornax[:,0], fornax[:,1], ra0, dec0, 30]]
+    f_angles = [np.deg2rad(x)
+                    for x in [fornax[:,0], fornax[:,1], ra0, dec0, 30]]
     f_inb = fornax[within_bounds(fornax[:,2], 1, *f_angles)]
 
     make_circles = lambda d : ["circle[[{0}deg, {1}deg], 0.5deg]\n".format(
