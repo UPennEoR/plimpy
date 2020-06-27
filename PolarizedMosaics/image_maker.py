@@ -53,4 +53,4 @@ for img in images:
     summary.write(str(dec0) + "\n")
     summary.close()
 
-os.system("/Applications/CASA.app/Contents/MacOS/casa -c image_maker_casa.py \"%s\"" % impath)
+os.system("casa -c image_maker_casa.py \"%s\"" % impath)
