@@ -1,0 +1,7 @@
+{'axisnames': array(['Long', 'Lati', 'Stokes', 'Frequency'], 
+       dtype='|S10'), 'axisunits': array(['deg', 'deg', '', 'Hz'], 
+       dtype='|S4'), 'defaultmask': '', 'hasmask': False, 'imagetype': 'Intensity', 'incr': array([ -3.99160604e-04,   3.99160604e-04,   1.00000000e+00,
+          1.00000000e+03]), 'masks': array([], 
+       dtype='|S1'), 'messages': array([], 
+       dtype='|S1'), 'ndim': 4, 'refpix': array([ 74.49430031,  74.60912501,   0.        ,   0.        ]), 'refval': array([  0.00000000e+00,   0.00000000e+00,   9.00000000e+00,
+          3.73000000e+11]), 'shape': array([151, 151,   4,   1], dtype=int32), 'tileshape': array([151, 151,   4,   1], dtype=int32), 'unit': ''}

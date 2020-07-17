@@ -1,0 +1,6 @@
+{'axisnames': array(['linear0', 'linear1', 'linear2', 'linear3'],
+       dtype='|S8'), 'axisunits': array(['km', 'km', 'km', 'km'],
+       dtype='|S3'), 'defaultmask': '', 'hasmask': False, 'imagetype': 'Intensity', 'incr': array([ 1.,  1.,  1$
+       dtype='|S1'), 'messages': array([],
+$ dtype=int32), 'unit': '"UNCALIB"'}
+
