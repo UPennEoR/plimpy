@@ -9,18 +9,18 @@ def within_bounds(di, min_brightness, dra, ddec, ra, dec, max_angle):
     cosa = np.sin(ddec)*np.sin(dec) + np.cos(ddec)*np.cos(dec)*np.cos(dra - ra)
     return np.logical_and(cosa > np.cos(max_angle), di > min_brightness)
 
-mspath = '/lustre/aoc/projects/hera/nkern/CHAMP_Bootcamp/Lesson10_HERADataPartII/data/zen.2458116.24482.xx.HH.uvOCR.ms'
-impath = '/lustre/aoc/projects/hera/aseidel/mask_and_none_test/'
+mspath = '/lustre/aoc/projects/hera/plaplant/HERA19Golden/CalibratedData/2457548/zen.2457548.26437.HH.uvcRPCS.MS'
+impath = '/lustre/aoc/projects/hera/aseidel/mask_and_none_flags2/'
 
 os.system("rm -rf {}*".format(impath))
 os.system("casa -c \"tclean(vis='{}',imagename='{}no_deconvolution',".format(mspath, impath) + 
                 "niter=0, imsize = [512,512], cell=['500 arcsec']," +
                 "specmode='mfs', spw='0:100~920', stokes='IQUV'," + 
-                "interactive=False, pblimit=-1, gridder='widefield') | " +
+                "interactive=False, pblimit=-1, gridder='widefield') ; " +
                 "exportfits(imagename='{}no_deconvolution.image',fitsimage='{}')\"".format(
-                    impath, impath+'kerndata.fits'))
+                    impath, impath+'data.fits'))
 
-header = fits.open(impath+'kerndata.fits')[0].header
+header = fits.open(impath+'data.fits')[0].header
 ra0, dec0 = header['CRVAL1'], header['CRVAL2']
 
 data_hdul = fits.open('/lustre/aoc/projects/hera/aseidel/summer_2019/asu.fit')
