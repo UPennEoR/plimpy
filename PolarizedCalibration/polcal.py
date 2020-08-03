@@ -145,16 +145,18 @@ class uvdata_pol_calibrator():
         gain_H_prev = np.copy(gain_prev)
         gain_next, gain_H_next = np.zeros_like(gain_prev), np.zeros_like(gain_prev)
         
-        print('base', base.shape)
-        print('prod', prod.shape)
-        print('freqs2cal', self.freqs2cal)
+        ### added test ###
+#         print('base', base.shape)
+#         print('prod', prod.shape)
+#         print('freqs2cal', self.freqs2cal)
         
-        tmp = list(self.gain_array.shape)
-        print('gain_array shape', tmp)
+        tmp = list(self.gain_array.shape) 
+#         print('gain_array shape', tmp)
         tmp.append(Niteration)
-        print('wtf', tmp)
+#         print('wtf', tmp)
         gain_array_iter = np.zeros(tmp, dtype=np.complex128)
-        print('gain_array_iter shape', gain_array_iter.shape)
+#         print('gain_array_iter shape', gain_array_iter.shape)
+        ### added test ###
         
         residual = np.zeros(Niteration)
 
@@ -207,7 +209,7 @@ class uvdata_pol_calibrator():
                         if ant_r != ant:
                             residual[iteration] += np.linalg.norm(prod[ant,ant_r] - np.matmul(gain_prev[ant][None], np.matmul(base[ant,ant_r], gain_H_prev[ant_r][None])))
             
-            print('gain_prev shape', gain_prev.shape)
+#             print('gain_prev shape', gain_prev.shape) ### added test ###
             for freq_index in self.freqs2cal:
                 gain_array_iter[:,freq_index,:,:,iteration] = gain_prev
         
