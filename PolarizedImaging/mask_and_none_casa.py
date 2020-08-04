@@ -8,19 +8,22 @@ impath = sys.argv[4]
 total_niter = [1000, 3000, 5000]
 mask_proportion = [0.0, 0.5, 0.8, 1.0]
 
-summary = open(impath+"info.txt", "r")
+summary = open(impath+"summary.txt", "r")
 ra0, dec0 = [x[:-1] for x in summary.readlines()]    
 
 os.system("cp -r {} {}".format(mspath, impath))
 
 mspath = impath + mspath.split('/')[-1]
 
-#tclean(vis=mspath,imagename=impath+'no_deconvolution',
-#                niter=1, imsize = [512,512], cell=['500 arcsec'],
-#                specmode='mfs', spw='0:100~920', stokes='IQUV', 
-#                interactive=False, pblimit=-1, #phasecenter='J2000 {}deg {}deg'.format(ra0, dec0),
-#               gridder='widefield')
+def this_tclean(newimage, niter, mpath=''):
+    tclean(vis=mspath, imagename=newimage,
+            niter=niter, weighting='briggs', robust=0.5, imsize = [512,512], cell=['500 arcsec'],
+            specmode='mfs', nterms=2, mask=mpath, spw='0:100~920',stokes='IQUV', 
+            interactive=False, pblimit=-1, phasecenter='J2000 {}deg {}deg'.format(ra0, dec0),
+            gridder='widefield')
 
+this_tclean('no_deconvolution', 0)
+    
 masks = sorted(glob(impath + "*mask.txt"))   
 
 for n in total_niter:
@@ -34,11 +37,7 @@ for n in total_niter:
             newimage = impath+'n{}_p{:.2f}_mask{}'.format(n,p,m)
             print(newimage.split('/')[-1])
             
-            tclean(vis=mspath, imagename=newimage,
-                    niter=n1, weighting='briggs', robust=0.5, imsize = [512,512], cell=['500 arcsec'],
-                    specmode='mfs', nterms=2, mask=mpath, spw='0:100~920',stokes='IQUV', 
-                    interactive=False, pblimit=-1, #phasecenter='J2000 {}deg {}deg'.format(ra0, dec0),
-                    gridder='widefield')
+            this_tclean(newimage, n1, mpath)
 
             for s in ['residual', 'model', 'image', 'mask']:
                 exportfits(imagename='{}.{}'.format(newimage,s), 
@@ -46,12 +45,11 @@ for n in total_niter:
             
             os.system("rm -rf {}.mask".format(newimage))
             
-            tclean(vis=mspath, imagename=newimage,
-                    niter=n2, weighting='briggs', robust=0.5, imsize = [512,512], cell=['500 arcsec'],
-                    specmode='mfs', nterms=2, mask=impath+'no_msk.txt', spw='0:100~920',stokes='IQUV', 
-                    interactive=False, pblimit=-1, #phasecenter='J2000 {}deg {}deg'.format(ra0, dec0),
-                    gridder='widefield')
+            this_tclean(newimage, n2)
             
             for s in ['residual', 'model', 'image']:
                 exportfits(imagename='{}.{}'.format(newimage,s), 
                        fitsimage='{}_final.{}.fits'.format(newimage,s))
+                
+                
+os.system("rm -rf {}summary.txt".format(impath))
