@@ -6,6 +6,7 @@ import copy
 import time
 import glob
 from scipy import interpolate
+from numba import jit
 
 class uvdata_pol_calibrator():
     
@@ -119,7 +120,8 @@ class uvdata_pol_calibrator():
         # concatenate axis to a shape (Nants, Nants, :, 2, 2)
 
         self.base_data_array,  self.prod_data_array = base_data_array, prod_data_array
-        
+    
+    @njit
     def Wirtinger_lm_cal(self, diagonalize=False, Niteration=50, including_autobaseline=False, verbose=False, epsilon=1e-12):
         """
         Using Newton-Gauss method to obtain calibration gains G which minimizing \sum{D_[ij]-G_i M_{ij} G_j^H}, where D, G and M are all 2*2 matrices. 
