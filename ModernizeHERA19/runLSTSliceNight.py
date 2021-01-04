@@ -1,6 +1,4 @@
-#!/Users/jaguirre/opt/anaconda3/envs/hera/bin/python
-
-#/usr/bin/python
+#!/lustre/aoc/projects/hera/jaguirre/anaconda3/envs/hera/bin/python
 
 import sys, getopt, os
 
