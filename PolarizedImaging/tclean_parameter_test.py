@@ -1,46 +1,41 @@
 import numpy as np
 import os
 
-uvfitspath = sys.argv[3]
+uvfitspaths = sys.argv[3].split(',')
 impath = sys.argv[4]
 
 summary = open(impath+"summary.txt", "r")
 ra0, dec0 = [x[:-1] for x in summary.readlines()]    
 summary.close()
 
-mspath = impath + '.'.join(uvfitspath.split('/')[-1].split('.')[:-1] + ['ms'])
-
-importuvfits(fitsfile=uvfitspath, vis=mspath)
-
-def this_tclean(newimage, niter=2000, mask='', wprojplanes=1, facets=1, side=512, nterms=2, robust=0.5,
-               deconvolver='hogbom'):
+def this_tclean(vis, newimage, niter=2000, mask='', wprojplanes=1, facets=1, side=512, nterms=2, robust=0.5,
+               deconvolver='clarkstokes', scales=[0], spw='0:0~100'):
     
-    tclean(vis=mspath, imagename=impath+newimage, niter=niter, weighting='briggs', 
-            robust=robust, imsize = [side,side], cell=['500 arcsec'],
-            specmode='mfs', nterms=nterms, mask=mask, spw='0:100~920', stokes='IQUV', 
+    # add spw='0:100~920', for real data
+    tclean(vis=vis, imagename=newimage, niter=niter, weighting='briggs', 
+            robust=robust, imsize = [side,side], cell=['500 arcsec'], scales=scales,
+            specmode='mfs', nterms=nterms, mask=mask, stokes='IQUV', spw=spw, 
             interactive=False, pblimit=-1, phasecenter='J2000 {}deg {}deg'.format(ra0, dec0),
             gridder='widefield', wprojplanes=wprojplanes, facets=facets)
     
     for s in ['image', 'model', 'residual', 'psf']:
-        exportfits(imagename='{}.{}'.format(impath+newimage,s), 
-                 fitsimage='{}.{}.fits'.format(impath+newimage,s))
-      
-    return
+        exportfits(imagename='{}.{}'.format(newimage, s), 
+                 fitsimage='{}.{}.fits'.format(newimage, s))
+   
+for path in uvfitspaths:
+    bpath = '/'.join(path.split('/')[:-1]) + '/' + '.'.join(path.split('/')[-1].split('.')[:-1])
+    mspath = bpath + '.ms'
+    importuvfits(fitsfile=path, vis=mspath)
+    this_tclean(vis=mspath, newimage=bpath+'_no_deconvolution', niter=0)
+    this_tclean(vis=mspath, newimage=bpath+'_deconvolved')
 
-this_tclean('no_deconvolution', niter=0)
 
-this_tclean('multiscale', deconvolver='multiscale')
-this_tclean('mtmfs', deconvolver='mtmfs')
 
-for p in [1,3]:
-    for f in [1,3]:
-        this_tclean('planes_{}_facets_{}'.format(p, f),
-                    wprojplanes=p, facets=f)
-
-this_tclean('planes_5', wprojplanes=5)
-this_tclean('facets_5', facets=5)
-this_tclean('1024x1024', side=1024)
-this_tclean('nterms_4', nterms=4)
-
-for r in [0,0.25,0.75,1,-2,-1,2]:
-    this_tclean('r_' + str(r), robust=r) 
+'''
+for f in [1,5,10,20,100]:
+    for t in [10]:#[1,2,4,7,10]:
+        this_tclean('f_0:{:.0f}_t_{:.0f}mins'.format(f,t), 
+                    spw='0:0~'+str(f), #timerange='11:40:00~11:{:.0f}:00'.format(t+40),
+                    mask = "circle[[{0}deg, {1}deg], 10deg]".format(
+                                        str(ra0), str(dec0))) 
+'''

@@ -26,15 +26,7 @@ uvd.write_uvfits(uvfitspath, spoof_nonessential=True, force_phase=True)
 ra0 = np.median(np.unique(uvd.lst_array))
 dec0 = uvd.phase_center_dec
 
-#generate image without deconvolution
-os.system("casa -c \"importuvfits(fitsfile='{}',vis='{}') ; ".format(uvfitspath, mspath) +
-                "tclean(vis='{}',imagename='{}no_deconvolution',".format(mspath, impath) + 
-                "niter=0, imsize = [512,512], cell=['500 arcsec']," +
-                "specmode='mfs', spw='0:100~920', stokes='IQUV'," + 
-                "interactive=False, pblimit=-1, gridder='widefield'," + 
-                "phasecenter='J2000 {}deg {}deg') ; ".format(ra0, dec0) +
-                "exportfits(imagename='{}no_deconvolution.image',fitsimage='{}')\"".format(
-                    impath, impath+'no_deconvolution.fits'))
+os.system("casa -c \"importuvfits(fitsfile='{}',vis='{}')".format(uvfitspath, mspath))
 
 """
 #make wcs solution

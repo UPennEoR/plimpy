@@ -23,6 +23,7 @@ def this_tclean(newimage, niter, mpath=''):
             gridder='widefield')
 
 this_tclean('no_deconvolution', 0)
+exportfits(imagename='no_deconvolution.image', fitsimage='no_deconvolution.fits')
     
 masks = sorted(glob(impath + "*mask.txt"))   
 
