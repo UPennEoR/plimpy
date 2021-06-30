@@ -13,7 +13,7 @@ import cv2
 
 ## A wrapper for converting uvh5(uvfits) files to fits files and 
 ## producing images (casa) and videos 
-def plot_image_difference(fitsfile_1, fitsfile_2, reference="1", title=None, save_fig=False):
+def plot_image_difference(fitsfile_1, fitsfile_2, name_1, name_2, reference="1", title=None, save_fig=False):
     stokes=["I",'Q','U','V']
     hdu_1 = fits.open(fitsfile_1)
     image_wcs = WCS(hdu_1[0].header, naxis=[1,2])
@@ -28,14 +28,16 @@ def plot_image_difference(fitsfile_1, fitsfile_2, reference="1", title=None, sav
     for i in range(4):
         if reference == "1":
             vmin, vmax = np.min(image_1[i,0,:,:]), np.max(image_1[i,0,:,:])
+            
         elif reference == "2":
             vmin, vmax = np.min(image_2[i,0,:,:]), np.max(image_2[i,0,:,:])
         else:
             raise ValueError("Reference value must be either '1' or '2'.")
+        vbound = np.max([abs(vmin), abs(vmax)])
         ax = axes[i,0]
-        im_1 = ax.imshow(image_1[i,0,:,:], origin='lower', interpolation='nearest', cmap='Blues', aspect='auto', vmin=vmin, vmax=vmax)
-        ax.grid(color='white',alpha=0.5)
-        ax.set_title("image1", fontsize=16)
+        im_1 = ax.imshow(image_1[i,0,:,:], origin='lower', interpolation='nearest', cmap='bwr', aspect='auto', vmin=-vbound, vmax=vbound)
+        ax.grid(color='k',alpha=0.8)
+        ax.set_title(name_1, fontsize=16)
         ax.text(0.1,0.9, "{}".format(stokes[i]), bbox=dict(facecolor='white', alpha=0.1), transform=ax.transAxes, fontsize=20, color='k')
         ax.set_ylabel('Dec (J2000)', fontsize=16)
         if i == 3:
@@ -45,9 +47,9 @@ def plot_image_difference(fitsfile_1, fitsfile_2, reference="1", title=None, sav
         ax.tick_params(axis='both', which='both', labelsize=14)
         
         ax = axes[i,1]
-        im_2 = ax.imshow(image_2[i,0,:,:], origin='lower', interpolation='nearest', cmap='Blues', aspect='auto', vmin=vmin, vmax=vmax)
-        ax.grid(color='white',alpha=0.5)
-        ax.set_title("image2", fontsize=16)
+        im_2 = ax.imshow(image_2[i,0,:,:], origin='lower', interpolation='nearest', cmap='bwr', aspect='auto', vmin=-vbound, vmax=vbound)
+        ax.grid(color='k',alpha=0.8)
+        ax.set_title(name_2, fontsize=16)
         if i == 3:
             ax.set_xlabel('RA (J2000)', fontsize=16)
         else:
@@ -56,9 +58,9 @@ def plot_image_difference(fitsfile_1, fitsfile_2, reference="1", title=None, sav
         ax.tick_params(axis='both', which='both', labelsize=14)
         
         ax = axes[i,2]
-        im_3 = ax.imshow(image_1[i,0,:,:]-image_2[i,0,:,:], origin='lower', interpolation='nearest', cmap='Blues', aspect='auto', vmin=vmin, vmax=vmax)
-        ax.grid(color='white',alpha=0.5)
-        ax.set_title("image1-image2", fontsize=16)
+        im_3 = ax.imshow(image_1[i,0,:,:]-image_2[i,0,:,:], origin='lower', interpolation='nearest', cmap='bwr', aspect='auto', vmin=-vbound, vmax=vbound)
+        ax.grid(color='k',alpha=0.8)
+        ax.set_title(name_1 +" - " + name_2, fontsize=16)
         if i == 3:
             ax.set_xlabel('RA (J2000)', fontsize=16)
         else:
